@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+
+    <title>Countrypedia</title>
+</head>
+{% block content %}
+
+<body>  
+  <section class="search">
+        <img src="../static/worldmap.png" alt="">
+        <h2 class="title">Countrypedia</h2>
+        <div class="btn-container">
+            <input class='search-country' type="text" name='country' autocomplete="off" required>
+            <input onclick="search();" class="btn" type="button"></input>
+
+        </div>
+    </section>
+    <section class="country">
+        <div class="flag">
+            <img id="img" src="" alt="">
+        </div>
+        <div class="country-info">
+            <h1><span id="country-title"></span></h1><br>
+            <h3>Population : <span id="population"></span></h3><br>
+            <h3>Area : <span id="area"></span> kmSq</h3><br>
+            <h3>GDP : <span id="gdp"></span> (in Billions)</h3><br>
+            <h3>HOS : <span id="hos"></span></h3><br>
+            <h3>HOG : <span id="hog"></span></h3><br>
+            <h3>Capital : <span id="capital"></span></h3><br>
+        </div>
+    </section>    
+</body>
+{% endblock %}
+</html>
+
+{% block script %}
+<script>
+    countryInfo = document.querySelector('.country')
+    countrytitle = document.querySelector('#country-title')
+    countryFlag = document.querySelector('#img')
+    population = document.querySelector('#population')
+    area = document.querySelector('#area')
+    gdp = document.querySelector('#gdp')
+    hos = document.querySelector('#hos')
+    hog = document.querySelector('#hog')
+    capital = document.querySelector('#capital')
+
+    country=document.querySelector('.search-country');
+    async function postreq(){
+    res = await fetch('/search',{
+        method:'POST',
+        headers:{
+            'content-type':'application/json'
+        },
+        body:JSON.stringify({
+            name: country.value
+        })
+    })
+    data = await res.json()
+    return data;
+    }
+
+    async function search(){
+        data = await postreq();
+        countryFlag.src=data.img;
+        population.innerText=data.Population;
+        area.innerText=data.Area;
+        gdp.innerText=data.GDP;
+        hos.innerText=data.HOS;
+        hog.innerText=data.HOG;
+        capital.innerText=data.Capital;
+        countrytitle.innerText=data.Country
+        countryInfo.style.display ='flex';
+    }
+</script>
+{% endblock %}
